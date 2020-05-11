@@ -1,5 +1,5 @@
 <script>
-import IoIosMic from 'svelte-icons/io/IoIosMic.svelte'
+import { MicOutlineIcon } from 'svelte-eva-icons'
 let audio 
 let audioChunks = []
 let mediaRecorder
@@ -47,17 +47,21 @@ const clear = () => {
 
 <section>
     <audio bind:this={audio} class="audio" />
-    <!-- <IoIosMic /> -->
-    <div class="buttons">    
-    {#if recording}
-        <button on:click={stopRecording}>stop</button>
-    {/if}
-    {#if recordedFile}
-        <button on:click={clear}>clear</button>
-        <a download="rec.webm" on:click={save}>save</a>
-    {/if}
     {#if !recording && !recordedFile}
-        <button on:click={startRecording}>start</button>
+        <div class="icon" on:click={startRecording}>
+            <MicOutlineIcon /> 
+        </div>
+    {/if}
+    {#if recording}
+        <div class="icon red" on:click={stopRecording}>
+            <MicOutlineIcon /> 
+        </div>
+    {/if}
+    
+    <div class="buttons">    
+    {#if recordedFile}
+        <p class='link' on:click={clear}>clear</p>
+        <a download="rec.webm" on:click={save}>save</a>
     {/if}
     </div>
 </section>
@@ -67,6 +71,17 @@ const clear = () => {
         position:absolute;
         bottom:2rem;
         display:grid;
-        grid-template-columns: repeat(3, 200px);
+        grid-template-columns: repeat(2, 100px);
+        align-items:center;
+    }
+    .icon{
+        height:100px;
+        width:100px;
+    }
+    .red{
+        fill:orangered;
+    }
+    a, .link{
+        cursor:pointer;
     }
 </style>

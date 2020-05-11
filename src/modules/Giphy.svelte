@@ -3,13 +3,20 @@
     import { word } from '../stores'
     
     let bg = ''
+    const limit = 1
 
-    $: $word.length > 3 && fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apikeys.giphy.api_key}&q=${$word}&limit=1`)
-    .then(res  => res.json())
-    .then(json => bg = json.data[0].images.downsized_medium.url)
+    $:   fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apikeys.giphy.api_key}&q=${$word}&limit=${limit}`)
+        .then(res  => res.json())
+        .then(json =>
+        {
+            console.log(json)
+             bg = json.data[0].images.downsized_medium.url
+        })
 
 </script>
 
-<section style='background-image:url("{bg}")'>
-    <!-- <input bind:value='{$word}' /> -->
-</section>
+{#if bg}
+    <section style='background-image:url({bg})'></section>
+{:else}
+    <h2>fetching image</h2>
+{/if}

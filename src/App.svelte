@@ -17,16 +17,16 @@
 	<h1>Utilities</h1>
 	<!-- <input bind:value={$word} />  -->
 	<div class="utils">
-		<!-- <Time />
-		<Location />
-		<Weather />
+		<Camera />
+		<!-- <Muse />
 		<News />
 		<Giphy />
+		<Time />
+		<Location />
+		<Weather />
 		<Speech />
-		<Muse />
-		<Words /> -->
-		<Camera />
-		<Memo />
+		<Words />
+		<Memo /> -->
 	</div>
 </main>
 

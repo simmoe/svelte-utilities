@@ -1,7 +1,7 @@
-
 <script>
+import { scale } from 'svelte/transition'
 
-let image, canvas, video
+let image, canvas, video, data
 let picTaken = false
 //The width to height ratio of a Golden Rectangle is 1:1.618
 let height = 300
@@ -10,29 +10,15 @@ let width = height * 1.618
 const takepicture = () => {
     var context = canvas.getContext('2d')
     context.drawImage(video, 0, 0, width, height)    
-    var data = canvas.toDataURL('image/png')
-    image.setAttribute('src', data)
-    image.style.transform = 'translateX(0)'
+    data = canvas.toDataURL('image/png')
     picTaken = true
 }
 
-const clear = () => {
-    image.style.transform = 'translateX(-100%)'
-    picTaken = false
-}
-
-const save = (node) => {
-    node.target.href = image.src
-    node.target.download = 'profile.png'
-}
-
-const startvideo = (node) => {
+const startvideo = () => {
     navigator.mediaDevices.getUserMedia({ video: { width: width, height: height }, audio: false})
     .then(function(stream) {
-        canvas.setAttribute('height', height)
-        canvas.setAttribute('width', width)
-        node.srcObject = stream
-        node.play()
+        video.srcObject = stream
+        video.play()
     })
     .catch(function(err) {
         console.log("An error occurred: " + err);
@@ -40,16 +26,18 @@ const startvideo = (node) => {
 }
 </script>
 
-<canvas bind:this={canvas} />
+<canvas bind:this={canvas} height={height} width={width} style='display:none;'/>
 <section>
     <video bind:this={video} class="video" use:startvideo />
     <img class='golden'  src="./assets/golden.png" alt="">
-    <img class='photo' src="" alt="camera" bind:this={image} />
+    {#if picTaken}
+        <img transition:scale class='photo' src={data} alt="camera" />
+    {/if}
     <div class="buttons">    
-        <button on:click={takepicture}>take a picture</button>
+        <button transition:scale on:click={takepicture}>take a picture</button>
         {#if picTaken}
-            <button on:click={clear}>clear</button>
-            <a on:click={save}>save</a>
+            <button in:scale on:click={() => picTaken = false }>clear</button>
+            <a transition:scale={{delay:400}} href={data} download = 'profile.png'>save</a>
         {/if}
     </div>
 </section>
@@ -59,28 +47,27 @@ const startvideo = (node) => {
         position:relative;
         overflow:hidden;
     }
-    canvas{
-        display:none;
-    }
     video{
         justify-self:start;
     }
-    .golden{
+    .golden, .photo{
         position:absolute;
         left:0;
         top:0;
         height:100%;
     }
-    .photo{
-        position:absolute;
-        left:0;
-        transform:translateX(-100%);
-        transition:.6s ease;
-    }
     .buttons{
         position:absolute;
         display:grid;
-        right:2rem;
-        bottom:2rem;
+        height:8rem;
+        grid-template-rows:repeat(3, 1fr);
+        right:0;
+        bottom:0;
+    }
+    button, a{
+        border:none;
+        color:#4285F4;
+        cursor: pointer;
+        text-decoration: none;
     }
 </style>
